@@ -38,6 +38,7 @@ Then visit `http://localhost:8080`.
 - Create account and login UI for account-based usage
 - Live backend authentication connected to `https://api.formatnest.me`
 - Backend-backed quota recording for logged-in users
+- Stripe checkout endpoint wired through the backend
 - 50 free conversions per browser/user account in the static MVP
 - Pricing section with a $25/month unlimited plan
 - Currency converter
@@ -85,6 +86,7 @@ Recommended production stack:
 - Enforce login, quota, and subscription access on the backend
 - Replace local demo accounts with real authentication before launch
 - Connect Stripe or Paddle for the $25/month unlimited plan
+- Configure `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID`, and `STRIPE_WEBHOOK_SECRET` on the backend before charging users
 - Store users and subscription status in a database
 - Validate MIME type and file extension
 - Set strict file-size limits per tool

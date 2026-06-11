@@ -790,6 +790,49 @@ input[type="range"] {
   font-weight: 850;
 }
 
+.ad-section {
+  display: grid;
+  gap: 12px;
+  padding: 22px clamp(18px, 5vw, 72px);
+  border-block: 1px solid var(--line);
+  background: #fff;
+}
+
+.ad-label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+
+.ad-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  align-items: center;
+}
+
+.ad-slot {
+  min-height: 250px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8faf9;
+}
+
+.native-ad {
+  min-height: 180px;
+}
+
+.sponsored-link {
+  width: fit-content;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 750;
+}
+
 .footer {
   display: flex;
   justify-content: space-between;

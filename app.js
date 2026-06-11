@@ -391,8 +391,8 @@ function renderCatalog(filter = "") {
       const card = document.createElement("a");
       card.className = "tool-card";
       const slug = slugify(name);
-      card.href = seoPageSlugs.has(slug) ? `./tools/${slug}.html` : `./index.html#execution`;
-      card.innerHTML = `<h3>${name}</h3><p>${desc}</p><span class="tag ${type === "server" ? "server" : ""}">${type === "server" ? "Backend engine" : "Works now"}</span>`;
+      card.href = seoPageSlugs.has(slug) ? `./tools/${slug}.html` : `./index.html#workspace`;
+      card.innerHTML = `<h3>${name}</h3><p>${desc}</p>`;
       toolGrid.appendChild(card);
     });
 }
@@ -1216,11 +1216,24 @@ async function login(email, password) {
   updateAccountUi();
 }
 
-function upgradeToPro() {
-  const user = currentUser() || { email: "demo@convertdesk.local" };
-  localStorage.setItem("convertdesk_user", JSON.stringify({ name: user.name, email: user.email, plan: "pro" }));
-  authState.textContent = "Unlimited access is active in this static demo.";
-  updateAccountUi();
+async function upgradeToPro() {
+  if (!authToken()) {
+    setAuthMode("signup");
+    authState.textContent = "Create an account first, then upgrade to unlimited.";
+    authModal.showModal();
+    return;
+  }
+  try {
+    const data = await apiRequest("/billing/create-checkout", {
+      method: "POST",
+      body: "{}"
+    });
+    window.location.href = data.checkout_url;
+  } catch (error) {
+    authState.textContent = error.message;
+    setAuthMode("login");
+    authModal.showModal();
+  }
 }
 
 async function restoreSession() {
@@ -1284,7 +1297,9 @@ authForm.addEventListener("submit", async (event) => {
     authState.textContent = error.message;
   }
 });
-upgradeBtn.addEventListener("click", upgradeToPro);
+upgradeBtn.addEventListener("click", () => {
+  upgradeToPro();
+});
 freePlanBtn.addEventListener("click", () => {
   if (!currentUser()) {
     setAuthMode("signup");

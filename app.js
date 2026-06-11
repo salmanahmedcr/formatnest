@@ -1240,22 +1240,12 @@ async function login(email, password) {
 
 async function upgradeToPro() {
   if (!authToken()) {
-    setAuthMode("signup");
-    authState.textContent = "Create an account first, then upgrade to unlimited.";
+    setAuthMode("login");
+    authState.textContent = "Log in or create a free account before upgrading to unlimited.";
     authModal.showModal();
     return;
   }
-  try {
-    const data = await apiRequest("/billing/create-checkout", {
-      method: "POST",
-      body: "{}"
-    });
-    window.location.href = data.checkout_url;
-  } catch (error) {
-    authState.textContent = error.message;
-    setAuthMode("login");
-    authModal.showModal();
-  }
+  window.location.href = "./checkout.html";
 }
 
 async function restoreSession() {

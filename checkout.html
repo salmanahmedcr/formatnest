@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Secure Checkout - FormatNest Unlimited</title>
+    <meta name="description" content="Upgrade to FormatNest Unlimited for $25 per month and unlock unlimited file conversions and image editing tools." />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="canonical" href="https://formatnest.me/checkout.html" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="checkout-page">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="FormatNest home">
+        <span class="brand-mark">FN</span>
+        <span>FormatNest</span>
+      </a>
+      <nav class="nav">
+        <a href="./index.html#tools">Tools</a>
+        <a href="./index.html#pricing">Pricing</a>
+      </nav>
+    </header>
+
+    <main class="checkout-shell">
+      <section class="checkout-card">
+        <p class="eyebrow">Secure checkout</p>
+        <h1>Upgrade to Unlimited</h1>
+        <p class="muted">Unlimited access to all FormatNest conversion and image editing tools for $25 per month.</p>
+
+        <div class="checkout-summary">
+          <div>
+            <span>Plan</span>
+            <strong>FormatNest Unlimited</strong>
+          </div>
+          <div>
+            <span>Price</span>
+            <strong>$25 / month</strong>
+          </div>
+          <div>
+            <span>Access</span>
+            <strong>Unlimited conversions</strong>
+          </div>
+        </div>
+
+        <div class="checkout-status" id="checkoutStatus">
+          <strong>Preparing payment...</strong>
+          <span>Keep this page open while we connect to the secure payment processor.</span>
+        </div>
+
+        <div class="checkout-actions" id="checkoutActions" hidden>
+          <a class="button primary" href="./index.html#pricing">Log in or create account</a>
+          <button class="button secondary" id="retryCheckout" type="button">Try again</button>
+        </div>
+      </section>
+    </main>
+
+    <script src="./checkout.js"></script>
+  </body>
+</html>

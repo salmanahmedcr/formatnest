@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FormatNest - Free Online File Converter and Image Editor</title>
+    <meta name="description" content="FormatNest is a fast online file converter and image editor for PNG to JPG, JPG to PNG, WEBP, SVG, image to PDF, JSON, CSV, XML, text files, and more." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://formatnest.com/" />
+    <meta property="og:title" content="FormatNest - Free Online File Converter" />
+    <meta property="og:description" content="Convert images, PDFs, data files, currencies, units, and text formats online. Edit images, crop, erase, resize, and download in your browser." />
+    <meta property="og:type" content="website" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "FormatNest",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Any",
+        "offers": [
+          { "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD" },
+          { "@type": "Offer", "name": "Unlimited", "price": "25", "priceCurrency": "USD" }
+        ],
+        "featureList": ["PNG to JPG", "JPG to PNG", "WEBP to JPG", "SVG to PNG", "Image editor", "Image to PDF", "Currency converter", "Meter to feet", "JSON to CSV", "CSV to JSON"]
+      }
+    </script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#home" aria-label="FormatNest home">
+        <span class="brand-mark">FN</span>
+        <span>FormatNest</span>
+      </a>
+      <nav class="nav">
+        <a href="#tools">Tools</a>
+        <a href="#exchangers">Exchangers</a>
+        <a href="#workspace">Convert</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#execution">Execution</a>
+      </nav>
+      <div class="auth-actions">
+        <button class="auth-button" id="openAuth" type="button">Log in</button>
+        <button class="auth-button primary-auth" id="openSignup" type="button">Create account</button>
+      </div>
+    </header>
+
+    <main id="home">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Private browser-based conversion suite</p>
+          <h1>Convert files without sending them away.</h1>
+          <p>
+            A full conversion website blueprint with working image, data, text,
+            and PDF creation tools ready to run locally today.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#workspace">Start converting</a>
+            <a class="button secondary" href="#pricing">View pricing</a>
+            <a class="button secondary" href="#execution">See launch plan</a>
+          </div>
+        </div>
+        <div class="hero-panel" aria-label="Conversion preview">
+          <div class="file-stack">
+            <span>PDF</span>
+            <span>PNG</span>
+            <span>CSV</span>
+            <span>WEBP</span>
+            <span>USD</span>
+          </div>
+          <div class="pipeline">
+            <span>Upload</span>
+            <strong>Convert</strong>
+            <span>Download</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="metrics" aria-label="Website highlights">
+        <div>
+          <strong>90+</strong>
+          <span>planned conversion routes</span>
+        </div>
+        <div>
+          <strong>28</strong>
+          <span>working browser tools</span>
+        </div>
+        <div>
+          <strong>0</strong>
+          <span>server uploads for MVP tools</span>
+        </div>
+      </section>
+
+      <section id="tools" class="section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Tool catalog</p>
+            <h2>Conversion options to offer</h2>
+          </div>
+          <label class="search">
+            <span>Search</span>
+            <input id="toolSearch" type="search" placeholder="pdf, image, csv, video..." />
+          </label>
+        </div>
+        <div id="toolGrid" class="tool-grid"></div>
+      </section>
+
+      <section id="exchangers" class="section exchangers-section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Everyday exchangers</p>
+            <h2>Currency, units, and quick calculators</h2>
+          </div>
+          <p class="muted">Fast calculators for searches like USD to EUR, meter to feet, kg to lbs, Celsius to Fahrenheit, and more.</p>
+        </div>
+        <div class="exchange-grid">
+          <form class="exchange-panel" id="exchangeForm">
+            <label>
+              Converter
+              <select id="exchangeType"></select>
+            </label>
+            <div class="exchange-row">
+              <label>
+                From
+                <select id="exchangeFrom"></select>
+              </label>
+              <label>
+                To
+                <select id="exchangeTo"></select>
+              </label>
+            </div>
+            <label>
+              Amount
+              <input id="exchangeAmount" type="number" step="any" value="1" />
+            </label>
+            <div class="exchange-result">
+              <span id="exchangeResult">1 meter = 3.2808 feet</span>
+              <small id="exchangeNote">Unit conversions work offline. Currency uses live rates when available.</small>
+            </div>
+          </form>
+          <div class="exchange-suggestions">
+            <h3>Special calculators</h3>
+            <div class="special-tabs" role="tablist" aria-label="Special exchanger calculators">
+              <button type="button" class="mini-button active" data-special="timezone">Time zone</button>
+              <button type="button" class="mini-button" data-special="age">Age</button>
+              <button type="button" class="mini-button" data-special="loan">Loan</button>
+              <button type="button" class="mini-button" data-special="percent">Percent</button>
+              <button type="button" class="mini-button" data-special="dpi">DPI</button>
+            </div>
+            <form class="special-panel active" data-special-panel="timezone">
+              <label>Time <input id="tzTime" type="datetime-local" /></label>
+              <div class="exchange-row">
+                <label>From <select id="tzFrom"></select></label>
+                <label>To <select id="tzTo"></select></label>
+              </div>
+              <strong id="tzResult">Choose a time to convert.</strong>
+            </form>
+            <form class="special-panel" data-special-panel="age">
+              <label>Date of birth <input id="birthDate" type="date" /></label>
+              <strong id="ageResult">Enter a birth date.</strong>
+            </form>
+            <form class="special-panel" data-special-panel="loan">
+              <label>Loan amount <input id="loanAmount" type="number" value="10000" /></label>
+              <div class="exchange-row">
+                <label>Annual rate % <input id="loanRate" type="number" value="8" step="0.01" /></label>
+                <label>Months <input id="loanMonths" type="number" value="36" /></label>
+              </div>
+              <strong id="loanResult">$313.36 per month</strong>
+            </form>
+            <form class="special-panel" data-special-panel="percent">
+              <div class="exchange-row">
+                <label>Value <input id="percentValue" type="number" value="20" /></label>
+                <label>Total <input id="percentTotal" type="number" value="200" /></label>
+              </div>
+              <strong id="percentResult">20 is 10% of 200</strong>
+            </form>
+            <form class="special-panel" data-special-panel="dpi">
+              <div class="exchange-row">
+                <label>Width px <input id="screenWidth" type="number" value="1920" /></label>
+                <label>Height px <input id="screenHeight" type="number" value="1080" /></label>
+              </div>
+              <label>Screen diagonal inches <input id="screenDiagonal" type="number" value="24" step="0.1" /></label>
+              <strong id="dpiResult">91.79 PPI</strong>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section id="workspace" class="section workspace-section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Working converter</p>
+            <h2>Convert in your browser</h2>
+          </div>
+          <p class="muted">Files are processed locally in this page for supported MVP tools.</p>
+        </div>
+
+        <div class="workspace">
+          <aside class="tool-picker" aria-label="Available converters">
+            <button class="tool-option active" data-mode="image">Image format converter</button>
+            <button class="tool-option" data-mode="edit">Image editor</button>
+            <button class="tool-option" data-mode="svg">SVG to image</button>
+            <button class="tool-option" data-mode="pdf">Images to PDF</button>
+            <button class="tool-option" data-mode="text">Text file converter</button>
+            <button class="tool-option" data-mode="data">JSON / CSV / XML converter</button>
+          </aside>
+
+          <form id="converterForm" class="converter" autocomplete="off">
+            <div class="dropzone" id="dropzone">
+              <input id="fileInput" type="file" />
+              <div>
+                <strong>Drop a file here</strong>
+                <span id="acceptHint">PNG, JPG, WEBP, BMP</span>
+              </div>
+            </div>
+
+            <div class="controls">
+              <label>
+                Output format
+                <select id="outputFormat"></select>
+              </label>
+              <label id="qualityWrap">
+                Quality
+                <input id="quality" type="range" min="40" max="100" value="88" />
+              </label>
+              <label id="widthWrap">
+                Max width
+                <input id="maxWidth" type="number" min="64" step="1" placeholder="Original" />
+              </label>
+            </div>
+
+            <div id="editorControls" class="editor-controls" hidden>
+              <div class="editor-strip" aria-label="Image editing tools">
+                <button type="button" class="mini-button active" data-editor-tool="move">Move</button>
+                <button type="button" class="mini-button" data-editor-tool="erase">Erase</button>
+                <button type="button" class="mini-button" data-editor-tool="draw">Draw</button>
+                <button type="button" class="mini-button" id="rotateLeft">Rotate left</button>
+                <button type="button" class="mini-button" id="rotateRight">Rotate right</button>
+                <button type="button" class="mini-button" id="flipHorizontal">Flip</button>
+                <button type="button" class="mini-button" id="resetEditor">Reset</button>
+              </div>
+              <div class="controls editor-grid">
+                <label>
+                  Brush size
+                  <input id="brushSize" type="range" min="8" max="120" value="34" />
+                </label>
+                <label>
+                  Draw color
+                  <input id="drawColor" type="color" value="#f26d5b" />
+                </label>
+                <label>
+                  Brightness
+                  <input id="brightness" type="range" min="50" max="150" value="100" />
+                </label>
+                <label>
+                  Contrast
+                  <input id="contrast" type="range" min="50" max="150" value="100" />
+                </label>
+                <label>
+                  Saturation
+                  <input id="saturation" type="range" min="0" max="200" value="100" />
+                </label>
+                <label>
+                  Crop X %
+                  <input id="cropX" type="number" min="0" max="95" value="0" />
+                </label>
+                <label>
+                  Crop Y %
+                  <input id="cropY" type="number" min="0" max="95" value="0" />
+                </label>
+                <label>
+                  Crop width %
+                  <input id="cropW" type="number" min="5" max="100" value="100" />
+                </label>
+                <label>
+                  Crop height %
+                  <input id="cropH" type="number" min="5" max="100" value="100" />
+                </label>
+                <button type="button" class="button secondary" id="applyCrop">Apply crop</button>
+                <button type="button" class="button secondary" id="applyFilters">Apply filters</button>
+              </div>
+            </div>
+
+            <div class="preview-area">
+              <div id="preview" class="preview empty">Choose a supported file to preview output.</div>
+              <div class="result-panel">
+                <dl>
+                  <div>
+                    <dt>Input</dt>
+                    <dd id="inputMeta">None</dd>
+                  </div>
+                  <div>
+                    <dt>Output</dt>
+                    <dd id="outputMeta">Waiting</dd>
+                  </div>
+                  <div>
+                    <dt>Status</dt>
+                    <dd id="statusText">Ready</dd>
+                  </div>
+                  <div>
+                    <dt>Free quota</dt>
+                    <dd id="quotaText">50 conversions left</dd>
+                  </div>
+                </dl>
+                <button class="button primary" id="convertBtn" type="submit">Convert</button>
+                <a class="button secondary disabled" id="downloadLink" download>Download</a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="pricing" class="section pricing-section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Pricing</p>
+            <h2>Start free, upgrade when you need more</h2>
+          </div>
+          <p class="muted">Free users get 50 conversions. Unlimited unlocks every tool.</p>
+        </div>
+        <div class="pricing-grid">
+          <article class="price-card">
+            <span class="price-label">Free</span>
+            <h3>$0</h3>
+            <p>50 conversions for each user account.</p>
+            <ul>
+              <li>Browser-based image, text, and data tools</li>
+              <li>Image editor access</li>
+              <li>Private local processing for supported tools</li>
+            </ul>
+            <button class="button secondary" id="freePlanBtn" type="button">Use free plan</button>
+          </article>
+          <article class="price-card featured">
+            <span class="price-label">Unlimited</span>
+            <h3>$25 <small>/ month</small></h3>
+            <p>Unlimited access to all conversion and editing tools.</p>
+            <ul>
+              <li>Unlimited conversions</li>
+              <li>All current and future tools</li>
+              <li>Priority heavy-file processing when backend is connected</li>
+            </ul>
+            <button class="button primary" id="upgradeBtn" type="button">Upgrade to unlimited</button>
+          </article>
+        </div>
+      </section>
+
+      <section id="execution" class="section">
+        <p class="eyebrow">Execution plan</p>
+        <h2>How to turn this into a commercial-grade website</h2>
+        <div class="roadmap">
+          <article>
+            <span>01</span>
+            <h3>Launch the browser MVP</h3>
+            <p>Use this static site for image, text, data, and image-to-PDF conversions. Host it on Netlify, Vercel, Cloudflare Pages, or any static host.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Add a conversion API</h3>
+            <p>Create a backend using Node.js or Python FastAPI. Add upload validation, temporary storage, worker jobs, and expiring download links.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Install processing engines</h3>
+            <p>Use LibreOffice for documents, FFmpeg for audio/video, ImageMagick or Sharp for images, Ghostscript/qpdf for PDFs, and Tesseract for OCR.</p>
+          </article>
+          <article>
+            <span>04</span>
+            <h3>Scale safely</h3>
+            <p>Move heavy jobs to queues, scan uploads, rate-limit abuse, delete files automatically, add analytics, and prioritize tools by search demand.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>FormatNest</span>
+      <span>Local-first conversions. Server engine ready when you scale.</span>
+    </footer>
+
+    <dialog class="auth-modal" id="authModal">
+      <form method="dialog" class="auth-card" id="authForm">
+        <button class="close-button" id="closeAuth" aria-label="Close login" type="button">x</button>
+        <p class="eyebrow">Account</p>
+        <h2 id="authTitle">Log in to track your free conversions</h2>
+        <div class="auth-switch" role="tablist" aria-label="Account mode">
+          <button class="mini-button active" id="loginMode" type="button">Log in</button>
+          <button class="mini-button" id="signupMode" type="button">Create account</button>
+        </div>
+        <label id="nameWrap" hidden>
+          Full name
+          <input id="authName" type="text" placeholder="Your name" />
+        </label>
+        <label>
+          Email address
+          <input id="authEmail" type="email" placeholder="you@example.com" required />
+        </label>
+        <label>
+          Password
+          <input id="authPassword" type="password" placeholder="Minimum 6 characters" minlength="6" required />
+        </label>
+        <button class="button primary" id="loginBtn" type="submit">Log in</button>
+        <p class="muted" id="authState">This static demo stores accounts in this browser only. Production needs backend auth.</p>
+      </form>
+    </dialog>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

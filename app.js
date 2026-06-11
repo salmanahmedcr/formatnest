@@ -372,6 +372,7 @@ const authTitle = $("#authTitle");
 const nameWrap = $("#nameWrap");
 const authName = $("#authName");
 const authForm = $("#authForm");
+const logoutBtn = $("#logoutBtn");
 const upgradeBtn = $("#upgradeBtn");
 const freePlanBtn = $("#freePlanBtn");
 const exchangeType = $("#exchangeType");
@@ -1169,6 +1170,7 @@ async function recordConversion() {
 function updateAccountUi() {
   const user = currentUser();
   const used = usedConversions();
+  const isLoggedIn = Boolean(user && authToken());
   if (user) {
     openAuth.textContent = user.plan === "pro" ? "Unlimited account" : user.email;
     openSignup.textContent = "Account";
@@ -1183,16 +1185,36 @@ function updateAccountUi() {
   } else {
     quotaText.textContent = isProUser() ? "Unlimited conversions" : `${Math.max(0, FREE_LIMIT - used)} of ${FREE_LIMIT} free conversions left`;
   }
+  logoutBtn.hidden = !isLoggedIn;
 }
 
 function setAuthMode(mode) {
+  if (currentUser() && authToken() && mode === "account") {
+    authTitle.textContent = "Your FormatNest account";
+    $("#loginBtn").hidden = true;
+    nameWrap.hidden = true;
+    authEmail.closest("label").hidden = true;
+    $("#authPassword").closest("label").hidden = true;
+    loginMode.hidden = true;
+    signupMode.hidden = true;
+    authForm.dataset.mode = "account";
+    authState.textContent = `${currentUser().email} is signed in.`;
+    logoutBtn.hidden = false;
+    return;
+  }
   const signup = mode === "signup";
   authTitle.textContent = signup ? "Create your free account" : "Log in to track your free conversions";
+  $("#loginBtn").hidden = false;
   $("#loginBtn").textContent = signup ? "Create account" : "Log in";
   nameWrap.hidden = !signup;
+  authEmail.closest("label").hidden = false;
+  $("#authPassword").closest("label").hidden = false;
+  loginMode.hidden = false;
+  signupMode.hidden = false;
   loginMode.classList.toggle("active", !signup);
   signupMode.classList.toggle("active", signup);
   authForm.dataset.mode = mode;
+  logoutBtn.hidden = true;
   authState.textContent = signup
     ? "Create a free account with 50 conversions."
     : "Log in to sync quota with the live backend.";
@@ -1250,6 +1272,14 @@ async function restoreSession() {
   updateAccountUi();
 }
 
+function logout() {
+  clearSession();
+  updateAccountUi();
+  setAuthMode("login");
+  authState.textContent = "You have been logged out.";
+  authModal.close();
+}
+
 toolSearch.addEventListener("input", (event) => renderCatalog(event.target.value));
 document.querySelectorAll(".tool-option").forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
 document.querySelectorAll("[data-editor-tool]").forEach((button) => button.addEventListener("click", () => setEditorTool(button.dataset.editorTool)));
@@ -1272,16 +1302,17 @@ dropzone.addEventListener("drop", (event) => {
 });
 $("#converterForm").addEventListener("submit", convert);
 openAuth.addEventListener("click", () => {
-  setAuthMode("login");
+  setAuthMode(currentUser() && authToken() ? "account" : "login");
   authModal.showModal();
 });
 openSignup.addEventListener("click", () => {
-  setAuthMode("signup");
+  setAuthMode(currentUser() && authToken() ? "account" : "signup");
   authModal.showModal();
 });
 $("#closeAuth").addEventListener("click", () => authModal.close());
 loginMode.addEventListener("click", () => setAuthMode("login"));
 signupMode.addEventListener("click", () => setAuthMode("signup"));
+logoutBtn.addEventListener("click", logout);
 authForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   try {

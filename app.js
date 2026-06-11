@@ -58,6 +58,7 @@ const toolCatalog = [
 ];
 
 const FREE_LIMIT = 50;
+const API_BASE = "https://api.formatnest.me";
 const exchangeGroups = {
   currency: {
     label: "Currency",
@@ -1061,7 +1062,7 @@ async function convert(event) {
     statusText.textContent = "Choose a file first.";
     return;
   }
-  if (!canConvert()) {
+  if (!(await canConvert())) {
     statusText.textContent = "Free limit reached. Upgrade for unlimited conversions.";
     document.querySelector("#pricing").scrollIntoView({ behavior: "smooth" });
     return;
@@ -1079,7 +1080,7 @@ async function convert(event) {
     downloadLink.download = result.name;
     downloadLink.classList.remove("disabled");
     outputMeta.textContent = `${result.name} · ${formatBytes(result.blob.size)}`;
-    recordConversion();
+    await recordConversion();
     statusText.textContent = "Complete";
   } catch (error) {
     statusText.textContent = error.message || "Conversion failed.";
@@ -1090,8 +1091,37 @@ function currentUser() {
   return JSON.parse(localStorage.getItem("convertdesk_user") || "null");
 }
 
-function storedAccounts() {
-  return JSON.parse(localStorage.getItem("formatnest_accounts") || "{}");
+function authToken() {
+  return localStorage.getItem("formatnest_token");
+}
+
+function saveSession(data) {
+  localStorage.setItem("formatnest_token", data.token);
+  localStorage.setItem("convertdesk_user", JSON.stringify(data.user));
+}
+
+function clearSession() {
+  localStorage.removeItem("formatnest_token");
+  localStorage.removeItem("convertdesk_user");
+}
+
+async function apiRequest(path, options = {}) {
+  const headers = {
+    "Content-Type": "application/json",
+    ...(options.headers || {})
+  };
+  const token = authToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const response = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.detail || "Request failed");
+  }
+  return data;
 }
 
 function userKey() {
@@ -1111,11 +1141,21 @@ function usedConversions() {
   return conversionCounts()[userKey()] || 0;
 }
 
-function canConvert() {
+async function canConvert() {
+  const user = currentUser();
+  if (user && authToken()) {
+    return user.plan === "pro" || user.conversions_left === "unlimited" || Number(user.conversions_left) > 0;
+  }
   return isProUser() || usedConversions() < FREE_LIMIT;
 }
 
-function recordConversion() {
+async function recordConversion() {
+  if (authToken()) {
+    const data = await apiRequest("/usage/record", { method: "POST", body: "{}" });
+    localStorage.setItem("convertdesk_user", JSON.stringify(data.user));
+    updateAccountUi();
+    return;
+  }
   if (isProUser()) {
     updateAccountUi();
     return;
@@ -1136,7 +1176,13 @@ function updateAccountUi() {
     openAuth.textContent = "Log in";
     openSignup.textContent = "Create account";
   }
-  quotaText.textContent = isProUser() ? "Unlimited conversions" : `${Math.max(0, FREE_LIMIT - used)} of ${FREE_LIMIT} free conversions left`;
+  if (user?.conversions_left !== undefined) {
+    quotaText.textContent = user.conversions_left === "unlimited"
+      ? "Unlimited conversions"
+      : `${user.conversions_left} of ${FREE_LIMIT} free conversions left`;
+  } else {
+    quotaText.textContent = isProUser() ? "Unlimited conversions" : `${Math.max(0, FREE_LIMIT - used)} of ${FREE_LIMIT} free conversions left`;
+  }
 }
 
 function setAuthMode(mode) {
@@ -1148,36 +1194,46 @@ function setAuthMode(mode) {
   signupMode.classList.toggle("active", signup);
   authForm.dataset.mode = mode;
   authState.textContent = signup
-    ? "Create a free demo account with 50 conversions in this browser."
-    : "Log in with an account created in this browser. Production needs backend auth.";
+    ? "Create a free account with 50 conversions."
+    : "Log in to sync quota with the live backend.";
 }
 
-function createAccount(name, email, password) {
-  const accounts = storedAccounts();
-  if (accounts[email]) throw new Error("Account already exists. Log in instead.");
-  accounts[email] = { name, email, password, plan: "free", createdAt: new Date().toISOString() };
-  localStorage.setItem("formatnest_accounts", JSON.stringify(accounts));
-  localStorage.setItem("convertdesk_user", JSON.stringify({ name, email, plan: "free" }));
+async function createAccount(name, email, password) {
+  const data = await apiRequest("/auth/signup", {
+    method: "POST",
+    body: JSON.stringify({ name, email, password })
+  });
+  saveSession(data);
   updateAccountUi();
 }
 
-function login(email, password) {
-  const accounts = storedAccounts();
-  if (!accounts[email]) throw new Error("No account found. Create an account first.");
-  if (accounts[email].password !== password) throw new Error("Incorrect password.");
-  localStorage.setItem("convertdesk_user", JSON.stringify({ name: accounts[email].name, email, plan: accounts[email].plan || "free" }));
+async function login(email, password) {
+  const data = await apiRequest("/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password })
+  });
+  saveSession(data);
   updateAccountUi();
 }
 
 function upgradeToPro() {
   const user = currentUser() || { email: "demo@convertdesk.local" };
-  const accounts = storedAccounts();
-  if (accounts[user.email]) {
-    accounts[user.email].plan = "pro";
-    localStorage.setItem("formatnest_accounts", JSON.stringify(accounts));
-  }
   localStorage.setItem("convertdesk_user", JSON.stringify({ name: user.name, email: user.email, plan: "pro" }));
   authState.textContent = "Unlimited access is active in this static demo.";
+  updateAccountUi();
+}
+
+async function restoreSession() {
+  if (!authToken()) {
+    updateAccountUi();
+    return;
+  }
+  try {
+    const data = await apiRequest("/me");
+    localStorage.setItem("convertdesk_user", JSON.stringify(data.user));
+  } catch {
+    clearSession();
+  }
   updateAccountUi();
 }
 
@@ -1213,15 +1269,15 @@ openSignup.addEventListener("click", () => {
 $("#closeAuth").addEventListener("click", () => authModal.close());
 loginMode.addEventListener("click", () => setAuthMode("login"));
 signupMode.addEventListener("click", () => setAuthMode("signup"));
-authForm.addEventListener("submit", (event) => {
+authForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   try {
     const email = authEmail.value.trim().toLowerCase();
     const password = $("#authPassword").value;
     if (authForm.dataset.mode === "signup") {
-      createAccount(authName.value.trim(), email, password);
+      await createAccount(authName.value.trim(), email, password);
     } else {
-      login(email, password);
+      await login(email, password);
     }
     authModal.close();
   } catch (error) {
@@ -1246,4 +1302,4 @@ setMode("image");
 setupExchangers();
 setupSpecialCalculators();
 selectTool(new URLSearchParams(location.search).get("tool"));
-updateAccountUi();
+restoreSession();

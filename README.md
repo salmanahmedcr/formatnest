@@ -36,6 +36,8 @@ Then visit `http://localhost:8080`.
 - XML to JSON/CSV
 - Searchable catalog for 70+ planned conversion routes
 - Create account and login UI for account-based usage
+- Live backend authentication connected to `https://api.formatnest.me`
+- Backend-backed quota recording for logged-in users
 - 50 free conversions per browser/user account in the static MVP
 - Pricing section with a $25/month unlimited plan
 - Currency converter

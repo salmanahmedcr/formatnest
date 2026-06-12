@@ -359,7 +359,8 @@ input[type="range"] {
 }
 
 .tool-card {
-  display: block;
+  display: grid;
+  gap: 10px;
   min-height: 154px;
   padding: 18px;
   border: 1px solid var(--line);
@@ -373,12 +374,50 @@ input[type="range"] {
 }
 
 .tool-card h3 {
-  margin-bottom: 8px;
+  margin-bottom: 0;
 }
 
 .tool-card p {
   font-size: 14px;
   line-height: 1.5;
+}
+
+.icon-badge {
+  display: inline-grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--teal);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0;
+  box-shadow: 0 10px 24px rgba(18, 32, 48, 0.12);
+}
+
+.icon-doc {
+  background: linear-gradient(135deg, var(--teal), #44a5ac);
+}
+
+.icon-image {
+  background: linear-gradient(135deg, var(--coral), #f5a35a);
+}
+
+.icon-media {
+  background: linear-gradient(135deg, #5267d8, #15aabf);
+}
+
+.icon-archive {
+  background: linear-gradient(135deg, #6a994e, var(--green));
+}
+
+.icon-data {
+  background: linear-gradient(135deg, #4b5563, #0f766e);
+}
+
+.icon-calc {
+  background: linear-gradient(135deg, var(--gold), #d97706);
 }
 
 .category-section,
@@ -423,6 +462,13 @@ input[type="range"] {
   color: var(--teal);
   font-size: 12px;
   font-weight: 850;
+  text-transform: uppercase;
+}
+
+.category-card small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
   text-transform: uppercase;
 }
 
@@ -1035,6 +1081,83 @@ input[type="range"] {
   min-height: auto;
 }
 
+.exact-tool-hero {
+  align-items: stretch;
+}
+
+.exact-tool-card {
+  display: grid;
+  gap: 16px;
+  align-self: center;
+  padding: clamp(20px, 4vw, 32px);
+  border: 1px solid rgba(8, 127, 140, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--shadow);
+}
+
+.exact-tool-card h2 {
+  font-size: clamp(24px, 4vw, 36px);
+}
+
+.exact-upload {
+  position: relative;
+  display: grid;
+  min-height: 170px;
+  place-items: center;
+  border: 2px dashed #9ab5c9;
+  border-radius: 8px;
+  background: #f7fafc;
+  text-align: center;
+  cursor: pointer;
+}
+
+.exact-upload input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.exact-upload strong,
+.exact-upload small {
+  display: block;
+}
+
+.exact-upload small,
+.tool-status {
+  color: var(--muted);
+}
+
+.tool-converter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.tool-converter-grid label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.tool-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.tool-result {
+  padding: 18px;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--teal);
+  font-size: clamp(24px, 4vw, 38px);
+  font-weight: 900;
+}
+
 .tool-upload-card {
   display: grid;
   gap: 14px;
@@ -1140,6 +1263,7 @@ input[type="range"] {
 
   .metrics,
   .controls,
+  .tool-converter-grid,
   .editor-grid,
   .exchange-row,
   .exchange-suggestions ul,

@@ -56,6 +56,9 @@ Then visit `http://localhost:8080`.
 - SEO landing pages for high-intent tools
 - Category-led homepage with PDF, image, document, media, exchanger, and OCR groups
 - Rich tool pages with upload CTAs, how-to steps, FAQ, privacy notes, and related tools
+- Exact embedded tool panels on every individual tool page
+- Direct homepage and dropdown links to separate tool URLs
+- Lightweight CSS badges/icons for faster visual scanning without heavy icon libraries
 - Account dashboard with login state, plan, quota, and activity
 - Workflow shortcuts for multi-step conversion jobs
 - Privacy, Terms, and Contact pages
@@ -63,7 +66,7 @@ Then visit `http://localhost:8080`.
 
 ## SEO pages included
 
-Every tool in the catalog has an indexable HTML landing page in `/tools/`, and each page has a title, description, canonical URL, and crawlable body content. The included `sitemap.xml` lists the tool pages for search engine discovery.
+Every tool in the catalog has an indexable HTML page in `/tools/`, and each page has a title, description, canonical URL, one H1, an exact embedded tool panel, FAQ content, related links, and crawlable body content. The included `sitemap.xml` lists the tool pages for search engine discovery.
 
 High-value exchanger pages include currency converter, meter to feet, feet to meter, KG to LBS, Celsius to Fahrenheit, area converter, volume converter, speed converter, data storage converter, time zone converter, age calculator, EMI calculator, percentage calculator, fuel economy, cooking measurements, power, energy, pressure, screen DPI, and crypto price converter.
 

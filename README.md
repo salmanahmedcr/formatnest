@@ -58,7 +58,7 @@ Then visit `http://localhost:8080`.
 - Rich tool pages with upload CTAs, how-to steps, FAQ, privacy notes, and related tools
 - Exact embedded tool panels on every individual tool page
 - Direct homepage and dropdown links to separate tool URLs
-- Lightweight CSS badges/icons for faster visual scanning without heavy icon libraries
+- Hover dropdown navigation, embedded tool pages, and a lightweight custom desktop cursor
 - Account dashboard with login state, plan, quota, and activity
 - Workflow shortcuts for multi-step conversion jobs
 - Privacy, Terms, and Contact pages

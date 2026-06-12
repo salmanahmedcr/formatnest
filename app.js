@@ -407,7 +407,7 @@ function renderCatalog(filter = "") {
       card.className = "tool-card";
       const slug = slugify(name);
       card.href = seoPageSlugs.has(slug) ? `./tools/${slug}.html` : `./tools/${slug}.html`;
-      card.innerHTML = `<span class="icon-badge ${iconClass(slug)}">${iconText(slug)}</span><h3>${name}</h3><p>${desc}</p>`;
+      card.innerHTML = `<h3>${name}</h3><p>${desc}</p>`;
       toolGrid.appendChild(card);
     });
 }
@@ -421,33 +421,12 @@ function renderCategories() {
       return `<a href="${href}">${tool}</a>`;
     }).join("");
     return `<article class="category-card" id="${group.id}">
-      <span class="icon-badge ${iconClass(group.id)}">${iconText(group.id)}</span>
       <small>${group.tools.length} tools</small>
       <h3>${group.title}</h3>
       <p>${group.description}</p>
       <div>${links}</div>
     </article>`;
   }).join("");
-}
-
-function iconClass(value) {
-  if (/pdf|word|document|ebook/.test(value)) return "icon-doc";
-  if (/png|jpg|webp|svg|image|bmp/.test(value)) return "icon-image";
-  if (/mp4|mp3|video|audio|mov|mkv|avi|wav|flac/.test(value)) return "icon-media";
-  if (/zip|rar|archive|7z/.test(value)) return "icon-archive";
-  if (/currency|meter|feet|kg|celsius|converter|calculator|speed|volume|pressure|energy|power|exchanger/.test(value)) return "icon-calc";
-  if (/json|csv|xml|txt|html|markdown|base64|data/.test(value)) return "icon-data";
-  return "icon-tool";
-}
-
-function iconText(value) {
-  if (/pdf|word|document|ebook/.test(value)) return "PDF";
-  if (/png|jpg|webp|svg|image|bmp/.test(value)) return "IMG";
-  if (/mp4|mp3|video|audio|mov|mkv|avi|wav|flac/.test(value)) return "AV";
-  if (/zip|rar|archive|7z/.test(value)) return "ZIP";
-  if (/currency|meter|feet|kg|celsius|converter|calculator|speed|volume|pressure|energy|power|exchanger/.test(value)) return "CAL";
-  if (/json|csv|xml|txt|html|markdown|base64|data/.test(value)) return "DATA";
-  return "FN";
 }
 
 function slugify(value) {

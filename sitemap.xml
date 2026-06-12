@@ -2,361 +2,379 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://formatnest.me/</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://formatnest.me/privacy.html</loc>
+    <lastmod>2026-06-12</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://formatnest.me/terms.html</loc>
+    <lastmod>2026-06-12</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://formatnest.me/contact.html</loc>
+    <lastmod>2026-06-12</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
     <loc>https://formatnest.me/tools/age-calculator.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/area-converter.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/base64-encode-decode.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/bmp-to-jpg-png.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/celsius-to-fahrenheit.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/cooking-measurement-converter.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/crypto-price-converter.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/csv-to-json.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/currency-converter.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/data-storage-converter.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/energy-converter.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/epub-mobi-pdf-ebooks.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/feet-to-meter.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/files-to-zip.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/fuel-economy-converter.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/html-to-txt.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/image-brightness-contrast.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/image-compress.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/image-crop.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/image-draw-markup.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/image-editor.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/image-eraser.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/image-ocr.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/image-resize.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/image-rotate-flip.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/image-to-pdf.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/images-to-pdf.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/jpg-to-png.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/json-to-csv.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/json-to-xml.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/kg-to-lbs.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/loan-emi-calculator.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/markdown-to-html.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/meter-to-feet.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/mov-mkv-avi-to-mp4.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/mp3-wav-m4a-flac.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/mp4-to-mp3.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/pdf-compress.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/pdf-merge.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/pdf-split.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/pdf-to-jpg-png.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/pdf-to-word.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/percentage-calculator.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/png-to-jpg.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/power-converter.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/pressure-converter.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/screen-dpi-calculator.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/speed-converter.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/svg-to-png-jpg-webp.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/svg-to-png.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/time-zone-converter.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/txt-to-html.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/video-to-gif.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/volume-converter.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/webp-to-jpg-png.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/webp-to-jpg.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/word-to-pdf.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/xml-to-json.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://formatnest.me/tools/zip-rar-7z-extract.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

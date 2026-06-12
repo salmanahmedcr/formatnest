@@ -67,9 +67,50 @@ a {
 
 .nav {
   display: flex;
+  align-items: center;
   gap: clamp(14px, 3vw, 30px);
   color: var(--muted);
   font-size: 14px;
+}
+
+.tool-menu {
+  position: relative;
+}
+
+.tool-menu summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.tool-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.tool-menu-panel {
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 0;
+  z-index: 30;
+  width: 220px;
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.tool-menu-panel a {
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.tool-menu-panel a:hover {
+  background: #eef6f7;
+  color: var(--teal-dark);
 }
 
 .auth-button,
@@ -338,6 +379,100 @@ input[type="range"] {
 .tool-card p {
   font-size: 14px;
   line-height: 1.5;
+}
+
+.category-section,
+.workflow-section,
+.dashboard-section,
+.trust-section {
+  background: #fff;
+}
+
+.category-grid,
+.workflow-grid,
+.dashboard-grid,
+.trust-grid,
+.tool-info-grid,
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.category-card,
+.workflow-grid article,
+.dashboard-card,
+.trust-grid article,
+.tool-info-card,
+.faq-card,
+.related-grid a {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.category-card {
+  display: grid;
+  gap: 12px;
+}
+
+.category-card span,
+.workflow-grid span,
+.dashboard-card span {
+  color: var(--teal);
+  font-size: 12px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.category-card div,
+.dashboard-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.category-card a,
+.workflow-grid a,
+.related-grid a {
+  color: var(--teal-dark);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.category-card div a {
+  padding: 7px 9px;
+  border-radius: 999px;
+  background: #eef6f7;
+}
+
+.workflow-grid article,
+.trust-grid article,
+.dashboard-card,
+.tool-info-card,
+.faq-card,
+.related-grid a {
+  box-shadow: 0 12px 36px rgba(18, 32, 48, 0.06);
+}
+
+.dashboard-section {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.dashboard-card {
+  display: grid;
+  gap: 8px;
+}
+
+.dashboard-card strong {
+  overflow-wrap: anywhere;
+  font-size: clamp(22px, 3vw, 32px);
+}
+
+.dashboard-actions {
+  margin-top: 18px;
 }
 
 .tag {
@@ -896,14 +1031,99 @@ input[type="range"] {
   gap: 12px;
 }
 
+.tool-landing {
+  min-height: auto;
+}
+
+.tool-upload-card {
+  display: grid;
+  gap: 14px;
+  padding: clamp(18px, 4vw, 28px);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.tool-upload-card .drop-icon {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  place-items: center;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--teal);
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.tool-steps {
+  counter-reset: steps;
+}
+
+.tool-steps li {
+  counter-increment: steps;
+  margin-bottom: 10px;
+  color: var(--muted);
+}
+
+.tool-steps li::marker {
+  color: var(--teal);
+  font-weight: 900;
+}
+
+.faq-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.faq-card h3 {
+  font-size: 17px;
+}
+
 .footer {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 18px;
   padding: 24px clamp(18px, 5vw, 72px);
   border-top: 1px solid var(--line);
   background: #fff;
   color: var(--muted);
+}
+
+.footer-links {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.legal-page {
+  padding: clamp(36px, 7vw, 86px) clamp(18px, 5vw, 72px);
+}
+
+.legal-card {
+  max-width: 920px;
+  display: grid;
+  gap: 16px;
+  margin: 0 auto;
+  padding: clamp(24px, 5vw, 46px);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.legal-card h1 {
+  margin-bottom: 0;
+  font-size: clamp(38px, 6vw, 64px);
+}
+
+.legal-card h2 {
+  margin-top: 12px;
+  font-size: clamp(24px, 3vw, 34px);
 }
 
 @media (max-width: 860px) {

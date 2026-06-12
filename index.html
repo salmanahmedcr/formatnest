@@ -35,9 +35,21 @@
         <span>FormatNest</span>
       </a>
       <nav class="nav">
+        <details class="tool-menu">
+          <summary>All tools</summary>
+          <div class="tool-menu-panel">
+            <a href="#pdf-tools">PDF tools</a>
+            <a href="#image-tools">Image tools</a>
+            <a href="#document-tools">Document tools</a>
+            <a href="#media-tools">Video & audio</a>
+            <a href="#exchangers">Exchangers</a>
+            <a href="#workspace">Open converter</a>
+          </div>
+        </details>
         <a href="#tools">Tools</a>
         <a href="#exchangers">Exchangers</a>
         <a href="#workspace">Convert</a>
+        <a href="#dashboard">Dashboard</a>
         <a href="#pricing">Pricing</a>
       </nav>
       <div class="auth-actions">
@@ -51,12 +63,10 @@
         <div class="hero-copy">
           <p class="eyebrow">Private browser-based conversion suite</p>
           <h1>Convert files without sending them away.</h1>
-          <p>
-            A full conversion website blueprint with working image, data, text,
-            and PDF creation tools ready to run locally today.
-          </p>
+          <p>FormatNest brings PDF tools, image editing, file conversion, and everyday exchangers into one clean workspace. Pick a tool, upload a file, convert, and download.</p>
           <div class="hero-actions">
             <a class="button primary" href="#workspace">Start converting</a>
+            <a class="button secondary" href="#tools">Browse tools</a>
             <a class="button secondary" href="#pricing">View pricing</a>
           </div>
         </div>
@@ -114,11 +124,22 @@
         <a class="sponsored-link" href="https://www.effectivecpmnetwork.com/wwm78kr9nt?key=ef322544d0d9a5145e802644f20afe95" rel="nofollow sponsored">Sponsored offer</a>
       </section>
 
+      <section class="section category-section" aria-label="Tool categories">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">All tools</p>
+            <h2>Choose the job, then convert</h2>
+          </div>
+          <p class="muted">Tools are grouped the way people work: organize, optimize, convert, edit, extract, and calculate.</p>
+        </div>
+        <div class="category-grid" id="categoryGrid"></div>
+      </section>
+
       <section id="tools" class="section">
         <div class="section-head">
           <div>
             <p class="eyebrow">Tool catalog</p>
-            <h2>Conversion options to offer</h2>
+            <h2>Search every FormatNest tool</h2>
           </div>
           <label class="search">
             <span>Search</span>
@@ -126,6 +147,38 @@
           </label>
         </div>
         <div id="toolGrid" class="tool-grid"></div>
+      </section>
+
+      <section class="section workflow-section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Workflows</p>
+            <h2>Combine tools for common jobs</h2>
+          </div>
+          <p class="muted">Shortcuts for multi-step tasks people repeat often.</p>
+        </div>
+        <div class="workflow-grid">
+          <article>
+            <span>PDF cleanup</span>
+            <h3>Compress PDF, split pages, then export images</h3>
+            <a href="./tools/pdf-compress.html">Start with Compress PDF</a>
+          </article>
+          <article>
+            <span>Image publishing</span>
+            <h3>Resize, compress, and convert images for the web</h3>
+            <a href="./tools/image-resize.html">Start with Image Resize</a>
+          </article>
+          <article>
+            <span>Text extraction</span>
+            <h3>Run OCR, clean text, and save a document</h3>
+            <a href="./tools/image-ocr.html">Start with Image OCR</a>
+          </article>
+          <article>
+            <span>Data conversion</span>
+            <h3>Move between JSON, CSV, XML, and text formats</h3>
+            <a href="./tools/json-to-csv.html">Start with JSON to CSV</a>
+          </article>
+        </div>
       </section>
 
       <section id="exchangers" class="section exchangers-section">
@@ -333,6 +386,38 @@
         </div>
       </section>
 
+      <section id="dashboard" class="section dashboard-section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Account dashboard</p>
+            <h2>Your conversion status</h2>
+          </div>
+          <p class="muted">Track your plan, free quota, and most useful account actions.</p>
+        </div>
+        <div class="dashboard-grid">
+          <article class="dashboard-card">
+            <span>Signed in as</span>
+            <strong id="dashboardUser">Guest user</strong>
+          </article>
+          <article class="dashboard-card">
+            <span>Current plan</span>
+            <strong id="dashboardPlan">Free</strong>
+          </article>
+          <article class="dashboard-card">
+            <span>Conversions left</span>
+            <strong id="dashboardQuota">50</strong>
+          </article>
+          <article class="dashboard-card">
+            <span>Recent activity</span>
+            <strong id="dashboardActivity">Ready to convert</strong>
+          </article>
+        </div>
+        <div class="dashboard-actions">
+          <button class="button primary" id="dashboardLogin" type="button">Log in or create account</button>
+          <a class="button secondary" href="#workspace">Open converter</a>
+        </div>
+      </section>
+
       <section id="pricing" class="section pricing-section">
         <div class="section-head">
           <div>
@@ -367,11 +452,43 @@
         </div>
       </section>
 
+      <section class="section trust-section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Privacy and trust</p>
+            <h2>Built for quick work without keeping your files</h2>
+          </div>
+        </div>
+        <div class="trust-grid">
+          <article>
+            <h3>Browser-first tools</h3>
+            <p>Image, text, data, and exchanger tools run in the browser whenever possible.</p>
+          </article>
+          <article>
+            <h3>Temporary processing</h3>
+            <p>Backend jobs use temporary storage with automatic cleanup for uploaded and output files.</p>
+          </article>
+          <article>
+            <h3>Secure connection</h3>
+            <p>FormatNest runs over HTTPS and separates account data from private file content.</p>
+          </article>
+          <article>
+            <h3>Clear account limits</h3>
+            <p>Free accounts can track quota, and paid access can remove limits after payment setup is complete.</p>
+          </article>
+        </div>
+      </section>
+
     </main>
 
     <footer class="footer">
       <span>FormatNest</span>
       <span>Fast file conversion, image editing, and everyday exchangers.</span>
+      <nav class="footer-links" aria-label="Footer links">
+        <a href="./privacy.html">Privacy</a>
+        <a href="./terms.html">Terms</a>
+        <a href="./contact.html">Contact</a>
+      </nav>
     </footer>
 
     <dialog class="auth-modal" id="authModal">

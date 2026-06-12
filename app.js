@@ -59,6 +59,14 @@ const toolCatalog = [
 
 const FREE_LIMIT = 50;
 const API_BASE = "https://api.formatnest.me";
+const toolCategoryGroups = [
+  { id: "pdf-tools", title: "PDF tools", description: "Merge, split, compress, convert, OCR, protect, and organize PDF files.", tools: ["PDF to Word", "Word to PDF", "PDF Compress", "PDF Merge", "PDF Split", "PDF to JPG/PNG", "Images to PDF"] },
+  { id: "image-tools", title: "Image tools", description: "Convert, resize, compress, crop, erase, rotate, and edit images.", tools: ["PNG to JPG", "JPG to PNG", "WEBP to JPG/PNG", "Image Editor", "Image Crop", "Image Compress", "Image Resize"] },
+  { id: "document-tools", title: "Document and data", description: "Move between documents, ebooks, text, JSON, CSV, XML, and web formats.", tools: ["CSV to JSON", "JSON to CSV", "XML to JSON", "JSON to XML", "TXT to HTML", "Markdown to HTML", "EPUB/MOBI/PDF ebooks"] },
+  { id: "media-tools", title: "Video, audio, archives", description: "Extract audio, normalize media files, create ZIP files, and unpack archives.", tools: ["MP4 to MP3", "MOV/MKV/AVI to MP4", "Video to GIF", "MP3/WAV/M4A/FLAC", "ZIP/RAR/7Z Extract", "Files to ZIP"] },
+  { id: "exchanger-tools", title: "Exchangers and calculators", description: "Currency, units, time zones, age, loans, percentages, fuel, power, and pressure.", tools: ["Currency Converter", "Meter to Feet", "KG to LBS", "Celsius to Fahrenheit", "Time Zone Converter", "Loan EMI Calculator", "Screen DPI Calculator"] },
+  { id: "ai-tools", title: "OCR and AI-ready tools", description: "Extract text from images now, with PDF summarizer and translator paths ready to add.", tools: ["Image OCR", "PDF to Word", "Image Editor"] }
+];
 const exchangeGroups = {
   currency: {
     label: "Currency",
@@ -335,6 +343,7 @@ let lastPoint = null;
 
 const $ = (selector) => document.querySelector(selector);
 const toolGrid = $("#toolGrid");
+const categoryGrid = $("#categoryGrid");
 const toolSearch = $("#toolSearch");
 const fileInput = $("#fileInput");
 const dropzone = $("#dropzone");
@@ -375,6 +384,11 @@ const authForm = $("#authForm");
 const logoutBtn = $("#logoutBtn");
 const upgradeBtn = $("#upgradeBtn");
 const freePlanBtn = $("#freePlanBtn");
+const dashboardUser = $("#dashboardUser");
+const dashboardPlan = $("#dashboardPlan");
+const dashboardQuota = $("#dashboardQuota");
+const dashboardActivity = $("#dashboardActivity");
+const dashboardLogin = $("#dashboardLogin");
 const exchangeType = $("#exchangeType");
 const exchangeFrom = $("#exchangeFrom");
 const exchangeTo = $("#exchangeTo");
@@ -396,6 +410,23 @@ function renderCatalog(filter = "") {
       card.innerHTML = `<h3>${name}</h3><p>${desc}</p>`;
       toolGrid.appendChild(card);
     });
+}
+
+function renderCategories() {
+  if (!categoryGrid) return;
+  categoryGrid.innerHTML = toolCategoryGroups.map((group) => {
+    const links = group.tools.map((tool) => {
+      const slug = slugify(tool);
+      const href = seoPageSlugs.has(slug) ? `./tools/${slug}.html` : "./index.html#workspace";
+      return `<a href="${href}">${tool}</a>`;
+    }).join("");
+    return `<article class="category-card" id="${group.id}">
+      <span>${group.tools.length} tools</span>
+      <h3>${group.title}</h3>
+      <p>${group.description}</p>
+      <div>${links}</div>
+    </article>`;
+  }).join("");
 }
 
 function slugify(value) {
@@ -1186,6 +1217,14 @@ function updateAccountUi() {
     quotaText.textContent = isProUser() ? "Unlimited conversions" : `${Math.max(0, FREE_LIMIT - used)} of ${FREE_LIMIT} free conversions left`;
   }
   logoutBtn.hidden = !isLoggedIn;
+  if (dashboardUser) {
+    dashboardUser.textContent = user?.email || "Guest user";
+    dashboardPlan.textContent = user?.plan === "pro" ? "Unlimited" : "Free";
+    dashboardQuota.textContent = user?.conversions_left === "unlimited"
+      ? "Unlimited"
+      : String(user?.conversions_left ?? Math.max(0, FREE_LIMIT - used));
+    dashboardActivity.textContent = isLoggedIn ? "Account synced" : "Local browser session";
+  }
 }
 
 function setAuthMode(mode) {
@@ -1328,12 +1367,17 @@ freePlanBtn.addEventListener("click", () => {
   }
   updateAccountUi();
 });
+dashboardLogin?.addEventListener("click", () => {
+  setAuthMode(currentUser() && authToken() ? "account" : "signup");
+  authModal.showModal();
+});
 exchangeType.addEventListener("change", () => selectExchange(exchangeType.value));
 exchangeFrom.addEventListener("change", updateExchange);
 exchangeTo.addEventListener("change", updateExchange);
 exchangeAmount.addEventListener("input", updateExchange);
 
 renderCatalog();
+renderCategories();
 setMode("image");
 setupExchangers();
 setupSpecialCalculators();

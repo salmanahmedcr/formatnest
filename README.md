@@ -54,6 +54,11 @@ Then visit `http://localhost:8080`.
 - Screen DPI calculator
 - Crypto price converter with fallback demo prices
 - SEO landing pages for high-intent tools
+- Category-led homepage with PDF, image, document, media, exchanger, and OCR groups
+- Rich tool pages with upload CTAs, how-to steps, FAQ, privacy notes, and related tools
+- Account dashboard with login state, plan, quota, and activity
+- Workflow shortcuts for multi-step conversion jobs
+- Privacy, Terms, and Contact pages
 - `robots.txt` and `sitemap.xml`
 
 ## SEO pages included
@@ -61,8 +66,6 @@ Then visit `http://localhost:8080`.
 Every tool in the catalog has an indexable HTML landing page in `/tools/`, and each page has a title, description, canonical URL, and crawlable body content. The included `sitemap.xml` lists the tool pages for search engine discovery.
 
 High-value exchanger pages include currency converter, meter to feet, feet to meter, KG to LBS, Celsius to Fahrenheit, area converter, volume converter, speed converter, data storage converter, time zone converter, age calculator, EMI calculator, percentage calculator, fuel economy, cooking measurements, power, energy, pressure, screen DPI, and crypto price converter.
-
-Replace `https://formatnest.com` in `index.html`, all tool pages, `robots.txt`, and `sitemap.xml` with your real domain before publishing.
 
 ## Backend tools to add next
 

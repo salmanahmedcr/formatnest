@@ -63,21 +63,54 @@ const backendRoutes = {
   "word-to-pdf": "word-to-pdf",
   "pdf-to-word": "pdf-to-word",
   "pdf-compress": "pdf-compress",
+  "pdf-merge": "pdf-merge",
+  "pdf-split": "pdf-split",
   "pdf-to-jpg-png": "pdf-to-png",
   "mp4-to-mp3": "mp4-to-mp3",
   "mov-mkv-avi-to-mp4": "video-to-mp4",
+  "video-to-gif": "video-to-gif",
   "mp3-wav-m4a-flac": "audio-to-mp3",
+  "files-to-zip": "files-to-zip",
   "zip-rar-7z-extract": "archive-extract",
-  "image-ocr": "image-ocr"
+  "image-ocr": "image-ocr",
+  "epub-mobi-pdf-ebooks": "ebook-convert"
 };
 
-const plannedRoutes = {
-  "pdf-merge": "PDF merge is being connected to the server worker. Use Compress PDF, PDF to Word, Word to PDF, or PDF to JPG/PNG now.",
-  "pdf-split": "PDF split is being connected to the server worker. Use Compress PDF, PDF to Word, Word to PDF, or PDF to JPG/PNG now.",
-  "video-to-gif": "Video to GIF is being connected to the server worker. MP4 to MP3 and video to MP4 are available now.",
-  "files-to-zip": "Files to ZIP is being connected to the browser workspace. Archive extraction is available now.",
-  "epub-mobi-pdf-ebooks": "Ebook conversion is being connected to the server worker. PDF and image conversion tools are available now."
+const backendAccepts = {
+  "pdf-to-word": ".pdf,application/pdf",
+  "word-to-pdf": ".doc,.docx,.odt,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "pdf-compress": ".pdf,application/pdf",
+  "pdf-merge": ".pdf,application/pdf",
+  "pdf-split": ".pdf,application/pdf",
+  "pdf-to-jpg-png": ".pdf,application/pdf",
+  "mp4-to-mp3": ".mp4,video/mp4",
+  "mov-mkv-avi-to-mp4": ".mov,.mkv,.avi,.webm,video/*",
+  "video-to-gif": ".mp4,.mov,.mkv,.avi,.webm,video/*",
+  "mp3-wav-m4a-flac": ".mp3,.wav,.m4a,.flac,audio/*",
+  "files-to-zip": "*",
+  "zip-rar-7z-extract": ".zip,.rar,.7z,application/zip",
+  "image-ocr": "image/png,image/jpeg,image/webp,image/bmp",
+  "epub-mobi-pdf-ebooks": ".epub,.mobi,.pdf,application/epub+zip,application/pdf"
 };
+
+const backendFormats = {
+  "pdf-to-word": ["docx"],
+  "word-to-pdf": ["pdf"],
+  "pdf-compress": ["pdf"],
+  "pdf-merge": ["pdf"],
+  "pdf-split": ["zip"],
+  "pdf-to-jpg-png": ["zip"],
+  "mp4-to-mp3": ["mp3"],
+  "mov-mkv-avi-to-mp4": ["mp4"],
+  "video-to-gif": ["gif"],
+  "mp3-wav-m4a-flac": ["mp3"],
+  "files-to-zip": ["zip"],
+  "zip-rar-7z-extract": ["zip"],
+  "image-ocr": ["txt"],
+  "epub-mobi-pdf-ebooks": ["pdf", "epub", "mobi"]
+};
+
+const multiFileRoutes = new Set(["pdf-merge", "files-to-zip"]);
 
 const $ = (selector) => document.querySelector(selector);
 const panel = $("#exactTool");
@@ -131,25 +164,33 @@ function setupFileTool(config) {
 
 function setupBackendTool(toolKey) {
   const input = $("#toolFile");
+  const format = $("#toolFormat");
   const download = $("#toolDownload");
   const uploadLabel = input?.closest(".exact-upload");
   if (!input || !download) {
     return setStatus("This server-powered tool page is missing its upload controls. Refresh the page in a moment.");
   }
-  input.accept = "";
+  input.accept = backendAccepts[slug] || "";
+  input.multiple = multiFileRoutes.has(slug);
+  if (format && backendFormats[slug]) {
+    format.innerHTML = backendFormats[slug].map((item) => `<option value="${item}">${item.toUpperCase()}</option>`).join("");
+  }
   updateSelectedFile(input, uploadLabel, download);
   input.addEventListener("change", () => updateSelectedFile(input, uploadLabel, download));
   $("#exactToolForm").addEventListener("submit", async (event) => {
     event.preventDefault();
-    const file = input.files?.[0];
-    if (!file) return setStatus("Upload a file first.");
+    const selected = [...(input.files || [])];
+    if (!selected.length) return setStatus(multiFileRoutes.has(slug) ? "Upload one or more files first." : "Upload a file first.");
+    if (slug === "pdf-merge" && selected.length < 2) return setStatus("Upload at least two PDF files to merge.");
     const token = authToken();
     if (!token) return setStatus("Log in or create an account before using this server-powered tool.");
     try {
       setStatus("Uploading to secure conversion worker...");
       const data = new FormData();
       data.append("tool", toolKey);
-      data.append("file", file);
+      if (format?.value) data.append("output_format", format.value);
+      if (multiFileRoutes.has(slug)) selected.forEach((file) => data.append("files", file));
+      else data.append("file", selected[0]);
       const response = await fetch(`${API_BASE}/convert`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
@@ -170,23 +211,9 @@ function setupBackendTool(toolKey) {
   });
 }
 
-function setupPlannedTool(message) {
-  const form = $("#exactToolForm");
-  const button = form?.querySelector("button[type='submit']");
-  const input = $("#toolFile");
-  const uploadLabel = input?.closest(".exact-upload");
-  const download = $("#toolDownload");
-  if (button) button.disabled = true;
-  if (download) download.classList.add("disabled");
-  if (input) {
-    updateSelectedFile(input, uploadLabel, download);
-    input.addEventListener("change", () => updateSelectedFile(input, uploadLabel, download));
-  }
-  setStatus(message);
-}
-
 function updateSelectedFile(input, uploadLabel, download) {
-  const file = input?.files?.[0];
+  const files = [...(input?.files || [])];
+  const file = files[0];
   const strong = uploadLabel?.querySelector("strong");
   const small = uploadLabel?.querySelector("small");
   if (download) {
@@ -200,9 +227,13 @@ function updateSelectedFile(input, uploadLabel, download) {
     return;
   }
   uploadLabel?.classList.add("has-file");
-  if (strong) strong.textContent = file.name;
-  if (small) small.textContent = `${formatBytes(file.size)} selected. Click Convert when ready.`;
-  setStatus(`Selected: ${file.name}`);
+  if (strong) strong.textContent = files.length > 1 ? `${files.length} files selected` : file.name;
+  if (small) {
+    const totalSize = files.reduce((sum, item) => sum + item.size, 0);
+    const names = files.slice(0, 3).map((item) => item.name).join(", ");
+    small.textContent = `${formatBytes(totalSize)} selected: ${names}${files.length > 3 ? `, +${files.length - 3} more` : ""}. Click Convert when ready.`;
+  }
+  setStatus(files.length > 1 ? `Selected ${files.length} files.` : `Selected: ${file.name}`);
 }
 
 function formatBytes(bytes) {
@@ -409,6 +440,5 @@ if (panel) {
   else if (exchangeRoutes[slug]) setupExchangeTool(exchangeRoutes[slug]);
   else if (["celsius-to-fahrenheit", "time-zone-converter", "age-calculator", "loan-emi-calculator", "percentage-calculator", "screen-dpi-calculator"].includes(slug)) setupSpecialTool();
   else if (backendRoutes[slug]) setupBackendTool(backendRoutes[slug]);
-  else if (plannedRoutes[slug]) setupPlannedTool(plannedRoutes[slug]);
   else setStatus(`${title} is ready. Upload a file to begin.`);
 }

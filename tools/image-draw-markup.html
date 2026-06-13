@@ -35,7 +35,7 @@
         <form class="exact-tool-card" id="exactToolForm">
           <div id="exactTool" data-tool="image-draw-markup" data-title="Image Draw Markup Converter"></div>
           <h2>Image Draw Markup Converter</h2>
-          <div class="tool-converter-grid"><label>Amount<input id="exchangeAmount" type="number" value="1" step="any" /></label><label>From<select id="exchangeFrom"><option>From</option></select></label><label>To<select id="exchangeTo"><option>To</option></select></label></div><div class="tool-result" id="exchangeResult">Enter a value to calculate.</div>
+          <label class="exact-upload"><input id="toolFile" type="file" /><span><strong>Upload file</strong><small>Drag and drop or choose a file from your device.</small></span></label><div class="tool-converter-grid"><label>Output format<select id="toolFormat"><option>Auto</option></select></label><label>Quality<input id="toolQuality" type="range" min="40" max="100" value="88" /></label><label>Max width<input id="toolWidth" type="number" min="64" placeholder="Original" /></label></div><p class="muted">Your selected file appears here immediately. Browser-supported tools process locally; server-powered tools require login.</p>
           <div class="tool-actions"><button class="button primary" type="submit">Convert</button><a class="button secondary disabled" id="toolDownload" download>Download</a></div>
           <p class="tool-status" id="toolStatus">Ready. Upload a file or enter a value to begin.</p>
         </form>

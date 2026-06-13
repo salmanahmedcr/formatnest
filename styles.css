@@ -1096,6 +1096,17 @@ input[type="range"] {
   cursor: pointer;
 }
 
+.exact-upload.has-file {
+  border-color: var(--teal);
+  background: #eef8f9;
+  box-shadow: 0 12px 28px rgba(8, 127, 140, 0.1);
+}
+
+.exact-upload.has-file strong {
+  color: var(--teal-dark);
+  overflow-wrap: anywhere;
+}
+
 .exact-upload input {
   position: absolute;
   inset: 0;
@@ -1131,6 +1142,11 @@ input[type="range"] {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+}
+
+.tool-actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .tool-result {
@@ -1286,6 +1302,16 @@ input[type="range"] {
     height: 54px;
     border-color: rgba(242, 109, 91, 0.78);
     background: rgba(242, 109, 91, 0.08);
+  }
+
+  .cursor-contrast:not(.cursor-active) .cursor-dot {
+    background: var(--ink);
+    box-shadow: 0 0 14px rgba(21, 33, 47, 0.22);
+  }
+
+  .cursor-contrast:not(.cursor-active) .cursor-ring {
+    border-color: rgba(21, 33, 47, 0.58);
+    background: rgba(255, 255, 255, 0.16);
   }
 
   .cursor-hidden .cursor-dot,

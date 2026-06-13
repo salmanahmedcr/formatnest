@@ -157,9 +157,10 @@ function setupBackendTool(toolKey) {
       });
       const job = await response.json();
       if (!response.ok) throw new Error(job.detail || "Backend conversion is not available for this tool yet.");
-      setStatus("Processing...");
-      const finished = await pollJob(job.job_id);
-      download.href = `${API_BASE}/download/${finished.job_id}`;
+      const created = job.job || job;
+      setStatus(created.status === "complete" || created.status === "done" ? "Finishing download..." : "Processing...");
+      const finished = created.status === "complete" || created.status === "done" ? created : await pollJob(created.id || created.job_id);
+      download.href = finished.download_url || `${API_BASE}/download/${finished.id || finished.job_id}`;
       download.download = finished.output_name || "formatnest-output";
       download.classList.remove("disabled");
       setStatus("Ready to download.");
@@ -217,8 +218,9 @@ async function pollJob(jobId) {
     const response = await fetch(`${API_BASE}/jobs/${jobId}`, {
       headers: { Authorization: `Bearer ${authToken()}` }
     });
-    const job = await response.json();
-    if (job.status === "done") return job;
+    const payload = await response.json();
+    const job = payload.job || payload;
+    if (job.status === "done" || job.status === "complete") return job;
     if (job.status === "failed") throw new Error(job.error || "Conversion failed.");
   }
   throw new Error("The conversion is still processing. Try again in a moment.");

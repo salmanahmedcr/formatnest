@@ -182,18 +182,17 @@ function setupBackendTool(toolKey) {
     const selected = [...(input.files || [])];
     if (!selected.length) return setStatus(multiFileRoutes.has(slug) ? "Upload one or more files first." : "Upload a file first.");
     if (slug === "pdf-merge" && selected.length < 2) return setStatus("Upload at least two PDF files to merge.");
-    const token = authToken();
-    if (!token) return setStatus("Log in or create an account before using this server-powered tool.");
     try {
-      setStatus("Uploading to secure conversion worker...");
+      setStatus("Uploading to conversion worker...");
       const data = new FormData();
       data.append("tool", toolKey);
       if (format?.value) data.append("output_format", format.value);
       if (multiFileRoutes.has(slug)) selected.forEach((file) => data.append("files", file));
       else data.append("file", selected[0]);
+      const token = authToken();
       const response = await fetch(`${API_BASE}/convert`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: authHeaders(token),
         body: data
       });
       const job = await response.json();
@@ -246,8 +245,9 @@ function formatBytes(bytes) {
 async function pollJob(jobId) {
   for (let i = 0; i < 30; i += 1) {
     await new Promise((resolve) => setTimeout(resolve, 2000));
+    const token = authToken();
     const response = await fetch(`${API_BASE}/jobs/${jobId}`, {
-      headers: { Authorization: `Bearer ${authToken()}` }
+      headers: authHeaders(token)
     });
     const payload = await response.json();
     const job = payload.job || payload;
@@ -255,6 +255,10 @@ async function pollJob(jobId) {
     if (job.status === "failed") throw new Error(job.error || "Conversion failed.");
   }
   throw new Error("The conversion is still processing. Try again in a moment.");
+}
+
+function authHeaders(token) {
+  return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
 function setupExchangeTool(route) {

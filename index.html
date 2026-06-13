@@ -303,7 +303,7 @@
 
           <form id="converterForm" class="converter" autocomplete="off">
             <div class="dropzone" id="dropzone">
-              <input id="fileInput" type="file" />
+              <input id="fileInput" type="file" multiple />
               <div>
                 <strong>Drop a file here</strong>
                 <span id="acceptHint">PNG, JPG, WEBP, BMP</span>
@@ -400,6 +400,7 @@
                 </dl>
                 <button class="button primary" id="convertBtn" type="submit">Convert</button>
                 <a class="button secondary disabled" id="downloadLink" download>Download</a>
+                <a class="button secondary disabled" id="downloadZipLink" download>Download ZIP</a>
               </div>
             </div>
           </form>

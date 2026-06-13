@@ -865,6 +865,75 @@ input[type="range"] {
   word-break: break-word;
 }
 
+.batch-panel {
+  width: 100%;
+  display: grid;
+  gap: 14px;
+  align-self: start;
+}
+
+.batch-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  color: var(--ink);
+}
+
+.batch-head span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.batch-list {
+  display: grid;
+  gap: 10px;
+  max-height: 430px;
+  overflow: auto;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.batch-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.batch-item span,
+.batch-item label {
+  display: grid;
+  gap: 4px;
+}
+
+.batch-item strong,
+.batch-item small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.batch-item small,
+.batch-item label {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.batch-item select {
+  width: 100%;
+  min-height: 36px;
+}
+
+.batch-item.complete {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
 .result-panel {
   display: grid;
   align-content: start;
@@ -1369,6 +1438,7 @@ input[type="range"] {
 
   .metrics,
   .controls,
+  .batch-item,
   .tool-converter-grid,
   .editor-grid,
   .exchange-row,

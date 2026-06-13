@@ -32,12 +32,12 @@ const exchangeRoutes = {
 };
 
 const fileRoutes = {
-  "png-to-jpg": { mode: "image", formats: ["jpg"], accept: "image/png" },
-  "jpg-to-png": { mode: "image", formats: ["png"], accept: "image/jpeg" },
-  "webp-to-jpg": { mode: "image", formats: ["jpg", "png"], accept: "image/webp" },
-  "webp-to-jpg-png": { mode: "image", formats: ["jpg", "png"], accept: "image/webp" },
-  "bmp-to-jpg-png": { mode: "image", formats: ["jpg", "png"], accept: "image/bmp" },
-  "svg-to-png": { mode: "image", formats: ["png"], accept: "image/svg+xml,.svg" },
+  "png-to-jpg": { mode: "image", formats: ["jpg", "webp", "png"], accept: "image/png" },
+  "jpg-to-png": { mode: "image", formats: ["png", "webp", "jpg"], accept: "image/jpeg" },
+  "webp-to-jpg": { mode: "image", formats: ["jpg", "png", "webp"], accept: "image/webp" },
+  "webp-to-jpg-png": { mode: "image", formats: ["jpg", "png", "webp"], accept: "image/webp" },
+  "bmp-to-jpg-png": { mode: "image", formats: ["jpg", "png", "webp"], accept: "image/bmp" },
+  "svg-to-png": { mode: "image", formats: ["png", "jpg", "webp"], accept: "image/svg+xml,.svg" },
   "svg-to-png-jpg-webp": { mode: "image", formats: ["png", "jpg", "webp"], accept: "image/svg+xml,.svg" },
   "image-to-pdf": { mode: "pdf", formats: ["pdf"], accept: "image/png,image/jpeg,image/webp,image/bmp,image/svg+xml,.svg" },
   "images-to-pdf": { mode: "pdf", formats: ["pdf"], accept: "image/png,image/jpeg,image/webp,image/bmp,image/svg+xml,.svg" },
@@ -137,17 +137,40 @@ function setupFileTool(config) {
     return setStatus("This tool page is missing its upload controls. Refresh the page in a moment.");
   }
   input.accept = config.accept;
+  input.multiple = config.mode === "image" || config.mode === "pdf";
   format.innerHTML = config.formats.map((item) => `<option value="${item}">${item.toUpperCase()}</option>`).join("");
   updateSelectedFile(input, uploadLabel, download);
-  input.addEventListener("change", () => updateSelectedFile(input, uploadLabel, download));
+  input.addEventListener("change", () => {
+    updateSelectedFile(input, uploadLabel, download);
+    if (config.mode === "image") renderExactBatchChoices(input, format.value);
+  });
+  format.addEventListener("change", () => {
+    if (config.mode === "image") renderExactBatchChoices(input, format.value);
+  });
 
   $("#exactToolForm").addEventListener("submit", async (event) => {
     event.preventDefault();
-    const file = input.files?.[0];
+    const files = [...(input.files || [])];
+    const file = files[0];
     if (!file) return setStatus("Upload a file first.");
     try {
       setStatus("Converting...");
       let result;
+      if (config.mode === "image" && files.length > 1) {
+        const results = [];
+        for (let index = 0; index < files.length; index += 1) {
+          const target = document.querySelector(`.exact-batch-format[data-index="${index}"]`)?.value || format.value;
+          setStatus(`Converting ${index + 1} of ${files.length}...`);
+          results.push(await convertImage(files[index], target, Number(quality.value) / 100, Number(width.value) || null));
+        }
+        renderExactBatchResults(results);
+        const zip = await createZip(results);
+        download.href = URL.createObjectURL(zip);
+        download.download = "formatnest-images.zip";
+        download.textContent = "Download ZIP";
+        download.classList.remove("disabled");
+        return setStatus(`Batch ready: ${results.length} files converted.`);
+      }
       if (config.mode === "image") result = await convertImage(file, format.value, Number(quality.value) / 100, Number(width.value) || null);
       if (config.mode === "pdf") result = await convertImageToPdf(file, Number(quality.value) / 100, Number(width.value) || null);
       if (config.mode === "text") result = await convertText(file, format.value);
@@ -233,6 +256,61 @@ function updateSelectedFile(input, uploadLabel, download) {
     small.textContent = `${formatBytes(totalSize)} selected: ${names}${files.length > 3 ? `, +${files.length - 3} more` : ""}. Click Convert when ready.`;
   }
   setStatus(files.length > 1 ? `Selected ${files.length} files.` : `Selected: ${file.name}`);
+}
+
+function detectImageFormat(file) {
+  const typeMap = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp",
+    "image/bmp": "bmp",
+    "image/svg+xml": "svg"
+  };
+  if (typeMap[file.type]) return typeMap[file.type];
+  const ext = file.name.toLowerCase().split(".").pop() || "file";
+  return ext === "jpeg" ? "jpg" : ext;
+}
+
+function targetFormatsFor(file, preferred) {
+  const source = detectImageFormat(file);
+  const base = source === "svg" ? ["png", "jpg", "webp"] : ["jpg", "png", "webp"];
+  const formats = base.filter((item) => item !== source);
+  if (["jpg", "png", "webp"].includes(source)) formats.push(source);
+  return [preferred, ...formats].filter((item, index, list) => item && list.indexOf(item) === index);
+}
+
+function renderExactBatchChoices(input, preferred) {
+  const form = $("#exactToolForm");
+  const files = [...(input?.files || [])];
+  form.querySelector(".exact-batch-panel")?.remove();
+  if (!files.length) return;
+  const rows = files.map((file, index) => {
+    const options = targetFormatsFor(file, preferred).map((item) => `<option value="${item}">${item.toUpperCase()}</option>`).join("");
+    return `<li class="batch-item">
+      <span><strong>${escapeHtml(file.name)}</strong><small>${formatBytes(file.size)} · detected ${detectImageFormat(file).toUpperCase()}</small></span>
+      <label>Convert to <select class="exact-batch-format" data-index="${index}">${options}</select></label>
+    </li>`;
+  }).join("");
+  const panel = document.createElement("div");
+  panel.className = "exact-batch-panel batch-panel";
+  panel.innerHTML = `<div class="batch-head"><strong>${files.length} image${files.length === 1 ? "" : "s"} selected</strong><span>FormatNest detected each upload format.</span></div><ul class="batch-list">${rows}</ul>`;
+  form.querySelector(".tool-actions")?.before(panel);
+}
+
+function renderExactBatchResults(results) {
+  const form = $("#exactToolForm");
+  form.querySelector(".exact-batch-panel")?.remove();
+  const rows = results.map((result) => {
+    const url = URL.createObjectURL(result.blob);
+    return `<li class="batch-item complete">
+      <span><strong>${escapeHtml(result.name)}</strong><small>${formatBytes(result.blob.size)}</small></span>
+      <a class="mini-button" href="${url}" download="${escapeHtml(result.name)}">Download</a>
+    </li>`;
+  }).join("");
+  const panel = document.createElement("div");
+  panel.className = "exact-batch-panel batch-panel";
+  panel.innerHTML = `<div class="batch-head"><strong>${results.length} converted files</strong><span>Download one by one or use the ZIP button.</span></div><ul class="batch-list">${rows}</ul>`;
+  form.querySelector(".tool-actions")?.before(panel);
 }
 
 function formatBytes(bytes) {
@@ -429,6 +507,93 @@ function makeTextBlob(text, originalName, ext, type = "text/plain") {
 
 function rename(filename, extension) {
   return `${filename.replace(/\.[^.]+$/, "")}.${extension}`;
+}
+
+const crcTable = (() => {
+  const table = new Uint32Array(256);
+  for (let i = 0; i < 256; i += 1) {
+    let c = i;
+    for (let k = 0; k < 8; k += 1) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+    table[i] = c >>> 0;
+  }
+  return table;
+})();
+
+function crc32(bytes) {
+  let crc = 0xffffffff;
+  for (const byte of bytes) crc = crcTable[(crc ^ byte) & 0xff] ^ (crc >>> 8);
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function write16(view, offset, value) {
+  view.setUint16(offset, value, true);
+}
+
+function write32(view, offset, value) {
+  view.setUint32(offset, value, true);
+}
+
+function zipDateParts(date = new Date()) {
+  return {
+    time: (date.getHours() << 11) | (date.getMinutes() << 5) | Math.floor(date.getSeconds() / 2),
+    day: ((date.getFullYear() - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate()
+  };
+}
+
+async function createZip(results) {
+  const encoder = new TextEncoder();
+  const parts = [];
+  const central = [];
+  let offset = 0;
+  const { time, day } = zipDateParts();
+  for (const result of results) {
+    const nameBytes = encoder.encode(result.name);
+    const data = new Uint8Array(await result.blob.arrayBuffer());
+    const crc = crc32(data);
+    const local = new Uint8Array(30 + nameBytes.length);
+    const localView = new DataView(local.buffer);
+    write32(localView, 0, 0x04034b50);
+    write16(localView, 4, 20);
+    write16(localView, 10, time);
+    write16(localView, 12, day);
+    write32(localView, 14, crc);
+    write32(localView, 18, data.length);
+    write32(localView, 22, data.length);
+    write16(localView, 26, nameBytes.length);
+    local.set(nameBytes, 30);
+    parts.push(local, data);
+    const headerOffset = offset;
+    offset += local.length + data.length;
+
+    const item = new Uint8Array(46 + nameBytes.length);
+    const itemView = new DataView(item.buffer);
+    write32(itemView, 0, 0x02014b50);
+    write16(itemView, 4, 20);
+    write16(itemView, 6, 20);
+    write16(itemView, 12, time);
+    write16(itemView, 14, day);
+    write32(itemView, 16, crc);
+    write32(itemView, 20, data.length);
+    write32(itemView, 24, data.length);
+    write16(itemView, 28, nameBytes.length);
+    write32(itemView, 42, headerOffset);
+    item.set(nameBytes, 46);
+    central.push(item);
+  }
+  const centralOffset = offset;
+  central.forEach((entry) => {
+    parts.push(entry);
+    offset += entry.length;
+  });
+  const end = new Uint8Array(22);
+  const endView = new DataView(end.buffer);
+  write32(endView, 0, 0x06054b50);
+  write16(endView, 8, results.length);
+  write16(endView, 10, results.length);
+  write32(endView, 12, offset - centralOffset);
+  write32(endView, 16, centralOffset);
+  parts.push(end);
+  return new Blob(parts, { type: "application/zip" });
 }
 
 function escapeHtml(text) {

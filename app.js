@@ -333,7 +333,10 @@ const modes = {
 
 let currentMode = "image";
 let currentFile = null;
+let currentFiles = [];
 let outputUrl = null;
+let zipOutputUrl = null;
+let batchResults = [];
 let editorCanvas = null;
 let editorCtx = null;
 let editorOriginal = null;
@@ -357,6 +360,7 @@ const inputMeta = $("#inputMeta");
 const outputMeta = $("#outputMeta");
 const statusText = $("#statusText");
 const downloadLink = $("#downloadLink");
+const downloadZipLink = $("#downloadZipLink");
 const acceptHint = $("#acceptHint");
 const editorControls = $("#editorControls");
 const brushSize = $("#brushSize");
@@ -440,6 +444,7 @@ function setMode(mode) {
     button.classList.toggle("active", button.dataset.mode === mode);
   });
   fileInput.accept = config.accept;
+  fileInput.multiple = ["image", "svg", "pdf"].includes(mode);
   acceptHint.textContent = config.hint;
   outputFormat.innerHTML = config.formats.map((format) => `<option value="${format}">${format.toUpperCase()}</option>`).join("");
   qualityWrap.style.display = config.quality ? "grid" : "none";
@@ -642,9 +647,17 @@ function updateDpi() {
 
 function resetResult() {
   if (outputUrl) URL.revokeObjectURL(outputUrl);
+  if (zipOutputUrl) URL.revokeObjectURL(zipOutputUrl);
   outputUrl = null;
+  zipOutputUrl = null;
+  batchResults = [];
   downloadLink.removeAttribute("href");
   downloadLink.classList.add("disabled");
+  downloadLink.textContent = "Download";
+  if (downloadZipLink) {
+    downloadZipLink.removeAttribute("href");
+    downloadZipLink.classList.add("disabled");
+  }
   outputMeta.textContent = "Waiting";
   statusText.textContent = "Ready";
 }
@@ -657,10 +670,22 @@ function formatBytes(bytes) {
 }
 
 function setFile(file) {
-  currentFile = file;
-  inputMeta.textContent = `${file.name} · ${formatBytes(file.size)}`;
+  setFiles([file]);
+}
+
+function setFiles(files) {
+  currentFiles = Array.from(files || []).filter(Boolean);
+  currentFile = currentFiles[0] || null;
+  if (!currentFile) {
+    inputMeta.textContent = "None";
+    return;
+  }
+  const totalSize = currentFiles.reduce((sum, file) => sum + file.size, 0);
+  inputMeta.textContent = currentFiles.length === 1
+    ? `${currentFile.name} · ${formatBytes(currentFile.size)} · detected ${detectImageFormat(currentFile).toUpperCase()}`
+    : `${currentFiles.length} files · ${formatBytes(totalSize)}`;
   resetResult();
-  updatePreview(file);
+  updatePreview(currentFile);
 }
 
 async function updatePreview(file) {
@@ -671,8 +696,13 @@ async function updatePreview(file) {
     return;
   }
   if (currentMode === "image" || currentMode === "svg" || currentMode === "pdf") {
+    if (currentFiles.length > 1 && currentMode !== "pdf") {
+      renderBatchPreview();
+      return;
+    }
     const url = URL.createObjectURL(file);
     preview.innerHTML = `<img src="${url}" alt="Selected file preview" />`;
+    renderSmartFormatOptions();
     return;
   }
   const text = await file.text();
@@ -861,8 +891,8 @@ function escapeHtml(text) {
   })[char]);
 }
 
-async function convertImageLike(toPdf = false) {
-  const image = await loadImage(currentFile);
+async function convertImageLike(toPdf = false, file = currentFile, forcedFormat = outputFormat.value) {
+  const image = await loadImage(file);
   const max = Number(maxWidth.value) || image.width;
   const scale = Math.min(1, max / image.width);
   const canvas = document.createElement("canvas");
@@ -876,13 +906,25 @@ async function convertImageLike(toPdf = false) {
   if (toPdf) {
     const jpeg = await canvasToBlob(canvas, "image/jpeg", Number(quality.value) / 100);
     const blob = await imageJpegToPdf(jpeg, canvas.width, canvas.height);
-    return { blob, name: rename(currentFile.name, "pdf") };
+    return { blob, name: rename(file.name, "pdf") };
   }
 
-  const format = outputFormat.value;
+  const format = forcedFormat;
   const mime = format === "jpg" ? "image/jpeg" : `image/${format}`;
   const blob = await canvasToBlob(canvas, mime, Number(quality.value) / 100);
-  return { blob, name: rename(currentFile.name, format) };
+  return { blob, name: rename(file.name, format) };
+}
+
+async function convertImageBatch() {
+  const results = [];
+  for (let index = 0; index < currentFiles.length; index += 1) {
+    const file = currentFiles[index];
+    const selector = document.querySelector(`.batch-format[data-index="${index}"]`);
+    const format = selector?.value || outputFormat.value;
+    statusText.textContent = `Converting ${index + 1} of ${currentFiles.length}...`;
+    results.push(await convertImageLike(false, file, format));
+  }
+  return results;
 }
 
 async function exportEditedImage() {
@@ -1088,13 +1130,100 @@ function rename(filename, extension) {
   return `${filename.replace(/\.[^.]+$/, "")}.${extension}`;
 }
 
+const crcTable = (() => {
+  const table = new Uint32Array(256);
+  for (let i = 0; i < 256; i += 1) {
+    let c = i;
+    for (let k = 0; k < 8; k += 1) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+    table[i] = c >>> 0;
+  }
+  return table;
+})();
+
+function crc32(bytes) {
+  let crc = 0xffffffff;
+  for (const byte of bytes) crc = crcTable[(crc ^ byte) & 0xff] ^ (crc >>> 8);
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function zipDateParts(date = new Date()) {
+  const time = (date.getHours() << 11) | (date.getMinutes() << 5) | Math.floor(date.getSeconds() / 2);
+  const day = ((date.getFullYear() - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate();
+  return { time, day };
+}
+
+function write16(view, offset, value) {
+  view.setUint16(offset, value, true);
+}
+
+function write32(view, offset, value) {
+  view.setUint32(offset, value, true);
+}
+
+async function createZip(results) {
+  const encoder = new TextEncoder();
+  const parts = [];
+  const central = [];
+  let offset = 0;
+  const { time, day } = zipDateParts();
+  for (const result of results) {
+    const nameBytes = encoder.encode(result.name);
+    const data = new Uint8Array(await result.blob.arrayBuffer());
+    const crc = crc32(data);
+    const local = new Uint8Array(30 + nameBytes.length);
+    const localView = new DataView(local.buffer);
+    write32(localView, 0, 0x04034b50);
+    write16(localView, 4, 20);
+    write16(localView, 10, time);
+    write16(localView, 12, day);
+    write32(localView, 14, crc);
+    write32(localView, 18, data.length);
+    write32(localView, 22, data.length);
+    write16(localView, 26, nameBytes.length);
+    local.set(nameBytes, 30);
+    parts.push(local, data);
+
+    const headerOffset = offset;
+    offset += local.length + data.length;
+    const centralFile = new Uint8Array(46 + nameBytes.length);
+    const centralView = new DataView(centralFile.buffer);
+    write32(centralView, 0, 0x02014b50);
+    write16(centralView, 4, 20);
+    write16(centralView, 6, 20);
+    write16(centralView, 12, time);
+    write16(centralView, 14, day);
+    write32(centralView, 16, crc);
+    write32(centralView, 20, data.length);
+    write32(centralView, 24, data.length);
+    write16(centralView, 28, nameBytes.length);
+    write32(centralView, 42, headerOffset);
+    centralFile.set(nameBytes, 46);
+    central.push(centralFile);
+  }
+  const centralOffset = offset;
+  central.forEach((entry) => {
+    parts.push(entry);
+    offset += entry.length;
+  });
+  const end = new Uint8Array(22);
+  const endView = new DataView(end.buffer);
+  write32(endView, 0, 0x06054b50);
+  write16(endView, 8, results.length);
+  write16(endView, 10, results.length);
+  write32(endView, 12, offset - centralOffset);
+  write32(endView, 16, centralOffset);
+  parts.push(end);
+  return new Blob(parts, { type: "application/zip" });
+}
+
 async function convert(event) {
   event.preventDefault();
-  if (!currentFile) {
+  if (!currentFile || !currentFiles.length) {
     statusText.textContent = "Choose a file first.";
     return;
   }
-  if (!(await canConvert())) {
+  const requiredConversions = (currentMode === "image" || currentMode === "svg") ? currentFiles.length : 1;
+  if (!(await canConvert(requiredConversions))) {
     statusText.textContent = "Free limit reached. Upgrade for unlimited conversions.";
     document.querySelector("#pricing").scrollIntoView({ behavior: "smooth" });
     return;
@@ -1102,6 +1231,27 @@ async function convert(event) {
   try {
     statusText.textContent = "Converting...";
     let result;
+    if ((currentMode === "image" || currentMode === "svg") && currentFiles.length > 1) {
+      batchResults = await convertImageBatch();
+      const first = batchResults[0];
+      outputUrl = URL.createObjectURL(first.blob);
+      downloadLink.href = outputUrl;
+      downloadLink.download = first.name;
+      downloadLink.textContent = `Download first (${first.name})`;
+      downloadLink.classList.remove("disabled");
+      const zipBlob = await createZip(batchResults);
+      zipOutputUrl = URL.createObjectURL(zipBlob);
+      if (downloadZipLink) {
+        downloadZipLink.href = zipOutputUrl;
+        downloadZipLink.download = "formatnest-images.zip";
+        downloadZipLink.classList.remove("disabled");
+      }
+      outputMeta.textContent = `${batchResults.length} files · ZIP ${formatBytes(zipBlob.size)}`;
+      await recordConversion(batchResults.length);
+      statusText.textContent = "Batch complete";
+      renderBatchResults(batchResults);
+      return;
+    }
     if (currentMode === "image" || currentMode === "svg") result = await convertImageLike(false);
     if (currentMode === "edit") result = await exportEditedImage();
     if (currentMode === "pdf") result = await convertImageLike(true);
@@ -1117,6 +1267,20 @@ async function convert(event) {
   } catch (error) {
     statusText.textContent = error.message || "Conversion failed.";
   }
+}
+
+function renderBatchResults(results) {
+  const rows = results.map((result, index) => {
+    const url = URL.createObjectURL(result.blob);
+    return `<li class="batch-item complete">
+      <span><strong>${escapeHtml(result.name)}</strong><small>${formatBytes(result.blob.size)}</small></span>
+      <a class="mini-button" href="${url}" download="${escapeHtml(result.name)}">Download</a>
+    </li>`;
+  }).join("");
+  preview.innerHTML = `<div class="batch-panel">
+    <div class="batch-head"><strong>${results.length} images converted</strong><span>Download files one by one, or use the ZIP button.</span></div>
+    <ul class="batch-list">${rows}</ul>
+  </div>`;
 }
 
 function currentUser() {
@@ -1173,18 +1337,21 @@ function usedConversions() {
   return conversionCounts()[userKey()] || 0;
 }
 
-async function canConvert() {
+async function canConvert(required = 1) {
   const user = currentUser();
   if (user && authToken()) {
-    return user.plan === "pro" || user.conversions_left === "unlimited" || Number(user.conversions_left) > 0;
+    return user.plan === "pro" || user.conversions_left === "unlimited" || Number(user.conversions_left) >= required;
   }
-  return isProUser() || usedConversions() < FREE_LIMIT;
+  return isProUser() || usedConversions() + required <= FREE_LIMIT;
 }
 
-async function recordConversion() {
+async function recordConversion(count = 1) {
   if (authToken()) {
-    const data = await apiRequest("/usage/record", { method: "POST", body: "{}" });
-    localStorage.setItem("convertdesk_user", JSON.stringify(data.user));
+    let data;
+    for (let index = 0; index < count; index += 1) {
+      data = await apiRequest("/usage/record", { method: "POST", body: "{}" });
+    }
+    if (data?.user) localStorage.setItem("convertdesk_user", JSON.stringify(data.user));
     updateAccountUi();
     return;
   }
@@ -1193,7 +1360,7 @@ async function recordConversion() {
     return;
   }
   const counts = conversionCounts();
-  counts[userKey()] = usedConversions() + 1;
+  counts[userKey()] = usedConversions() + count;
   localStorage.setItem("convertdesk_counts", JSON.stringify(counts));
   updateAccountUi();
 }
@@ -1225,6 +1392,58 @@ function updateAccountUi() {
       : String(user?.conversions_left ?? Math.max(0, FREE_LIMIT - used));
     dashboardActivity.textContent = isLoggedIn ? "Account synced" : "Local browser session";
   }
+}
+
+function detectImageFormat(file) {
+  const typeMap = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp",
+    "image/bmp": "bmp",
+    "image/svg+xml": "svg"
+  };
+  if (typeMap[file.type]) return typeMap[file.type];
+  const match = file.name.toLowerCase().match(/\.([a-z0-9]+)$/);
+  const ext = match?.[1] || "file";
+  return ext === "jpeg" ? "jpg" : ext;
+}
+
+function smartTargetFormats(file, preferred = outputFormat.value) {
+  const source = detectImageFormat(file);
+  const base = source === "svg" ? ["png", "jpg", "webp"] : ["jpg", "png", "webp"];
+  const formats = base.filter((format) => format !== source);
+  if (["jpg", "png", "webp"].includes(source)) formats.push(source);
+  return [preferred, ...formats].filter((format, index, list) => format && list.indexOf(format) === index);
+}
+
+function renderSmartFormatOptions() {
+  if (!(currentMode === "image" || currentMode === "svg") || !currentFile) return;
+  const previous = outputFormat.value;
+  const options = smartTargetFormats(currentFile, previous);
+  outputFormat.innerHTML = options.map((format) => `<option value="${format}">${format.toUpperCase()}</option>`).join("");
+  outputFormat.value = options.includes(previous) ? previous : options[0];
+}
+
+function renderBatchPreview() {
+  const rows = currentFiles.map((file, index) => {
+    const detected = detectImageFormat(file);
+    const options = smartTargetFormats(file).map((format) => `<option value="${format}">${format.toUpperCase()}</option>`).join("");
+    return `<li class="batch-item">
+      <span><strong>${escapeHtml(file.name)}</strong><small>${formatBytes(file.size)} · detected ${detected.toUpperCase()}</small></span>
+      <label>Convert to <select class="batch-format" data-index="${index}">${options}</select></label>
+    </li>`;
+  }).join("");
+  preview.innerHTML = `<div class="batch-panel">
+    <div class="batch-head"><strong>${currentFiles.length} images ready</strong><span>Choose output per file or apply one format to all.</span></div>
+    <button type="button" class="mini-button" id="applyFormatToBatch">Apply ${outputFormat.value.toUpperCase()} to all</button>
+    <ul class="batch-list">${rows}</ul>
+  </div>`;
+  $("#applyFormatToBatch")?.addEventListener("click", () => {
+    document.querySelectorAll(".batch-format").forEach((select) => {
+      const formats = [...select.options].map((option) => option.value);
+      if (formats.includes(outputFormat.value)) select.value = outputFormat.value;
+    });
+  });
 }
 
 function setAuthMode(mode) {
@@ -1318,7 +1537,7 @@ $("#flipHorizontal").addEventListener("click", flipEditor);
 $("#resetEditor").addEventListener("click", resetEditor);
 $("#applyCrop").addEventListener("click", applyCropToEditor);
 $("#applyFilters").addEventListener("click", applyFiltersToEditor);
-fileInput.addEventListener("change", (event) => event.target.files[0] && setFile(event.target.files[0]));
+fileInput.addEventListener("change", (event) => event.target.files[0] && setFiles(event.target.files));
 dropzone.addEventListener("dragover", (event) => {
   event.preventDefault();
   dropzone.classList.add("dragover");
@@ -1327,7 +1546,7 @@ dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover
 dropzone.addEventListener("drop", (event) => {
   event.preventDefault();
   dropzone.classList.remove("dragover");
-  if (event.dataTransfer.files[0]) setFile(event.dataTransfer.files[0]);
+  if (event.dataTransfer.files[0]) setFiles(event.dataTransfer.files);
 });
 $("#converterForm").addEventListener("submit", convert);
 openAuth.addEventListener("click", () => {

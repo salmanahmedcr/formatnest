@@ -4,6 +4,17 @@
   function setupHoverMenus() {
     document.querySelectorAll(".tool-menu").forEach((menu) => {
       const summary = menu.querySelector("summary");
+      let closeTimer;
+
+      const openMenu = () => {
+        clearTimeout(closeTimer);
+        menu.setAttribute("open", "");
+      };
+
+      const closeMenu = () => {
+        clearTimeout(closeTimer);
+        closeTimer = setTimeout(() => menu.removeAttribute("open"), 220);
+      };
 
       summary?.addEventListener("click", (event) => {
         if (finePointer.matches) {
@@ -13,13 +24,19 @@
 
       menu.addEventListener("mouseenter", () => {
         if (finePointer.matches) {
-          menu.setAttribute("open", "");
+          openMenu();
         }
       });
 
       menu.addEventListener("mouseleave", () => {
         if (finePointer.matches) {
-          menu.removeAttribute("open");
+          closeMenu();
+        }
+      });
+
+      menu.addEventListener("focusin", () => {
+        if (finePointer.matches) {
+          openMenu();
         }
       });
     });

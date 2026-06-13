@@ -77,6 +77,15 @@ a {
   position: relative;
 }
 
+.tool-menu::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: -12px;
+  width: calc(100% + 24px);
+  height: 18px;
+}
+
 .tool-menu summary {
   list-style: none;
   cursor: pointer;

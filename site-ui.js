@@ -8,6 +8,11 @@
 
       const openMenu = () => {
         clearTimeout(closeTimer);
+        document.querySelectorAll(".tool-menu[open]").forEach((otherMenu) => {
+          if (otherMenu !== menu) {
+            otherMenu.removeAttribute("open");
+          }
+        });
         menu.setAttribute("open", "");
       };
 
